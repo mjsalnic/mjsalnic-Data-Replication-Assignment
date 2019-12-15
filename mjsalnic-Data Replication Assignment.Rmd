@@ -132,7 +132,7 @@ mosaicplot(totals, main = "Escape-hatching success after complications", xlab = 
 
 
 1= Failed to hatch 
-![](img/Compression.tif)
+![](img/Compression.jpg)
 0= Succesfully hatched embryos 
 
 
