@@ -50,7 +50,7 @@ R2: rupture two
 ## **Outline** 
 
 This is an analysis of the data used for a poster presentation at SICB 2017, which now is part of a manuscript. The statistical analyses presented in the poster were made using [JMP-data analysis sorfware](https://www.jmp.com/en_us/software/data-analysis-software.html)
-The statistical analysis in made for SICB includes: boxplots, contingency Analysis (Mosaic plots and contingency tables), Wilcoxon/Kruskal-Wallis (Rank Sum) tests, Fisher´s exact Test,
+The statistical analysis in made for SICB includes: boxplots, contingency Analysis (Mosaic plots and contingency tables), Wilcoxon/Kruskal-Wallis (Rank Sum) test, Fisher´s exact Test. I will replicate all of the analyses presented in the original poster.
 
 (1) Load and data preparation
 (2) Exporatory analysis
@@ -100,8 +100,9 @@ The statistical analysis in made for SICB includes: boxplots, contingency Analys
 * vcdExtra
 
 
-### Loading required libraries
+
 ```{r, include=FALSE}
+### Loading required libraries
 library(knitr)
 library(curl)
 library(dplyr)
@@ -142,7 +143,7 @@ HC2016R$Rescue<- factor(HC2016R$Rescue)
 str(HC2016R)
 ```
 
-* Subsetting data frame
+* **Subsetting data frame**
 
 let’s subset the data into 2 outcome groups: success_hat (hatched embryos after displacement) and failed_hat(embryos unable to hatch after displacement) 
 ```{r}
@@ -164,15 +165,14 @@ Compare number of holes by Age
 mosaic(~ NumHoles + Age, data = HC2016R, main = "Escape-hatching success after complications", shade= TRUE,legend=TRUE)
 ```
 
-compare number of holes by Stage
+**Compare number of holes by Stage**
 
 ```{r}
 mosaic(~ NumHoles + Stage, data = HC2016R, main = "Escape-hatching success after complications", shade= TRUE,legend=TRUE)
 ```
 
 
-
-Should we use parametric or non-parametric test?
+**Comparing position changes- Should we use parametric or non-parametric test?**
 
 ```{r}
 par(mfrow=c(3,2))
@@ -185,8 +185,23 @@ hist(HC2016R$NumPosChanADBefore2ndHole[HC2016R$Stage=="7"])
 
 ```
 
+Non-parametric
 
-There are not differences between treatments
+**Exit duration in seconds- Should we use parametric or non-parametric test?**
+
+```{r}
+par(mfrow=c(3,2))
+hist(success_hat$EXIT.DURATION.StarttoFullyOutsec[success_hat$Stage=="2"])
+hist(success_hat$EXIT.DURATION.StarttoFullyOutsec[success_hat$Stage=="3"])
+hist(success_hat$EXIT.DURATION.StarttoFullyOutsec[success_hat$Stage=="4"])
+hist(success_hat$EXIT.DURATION.StarttoFullyOutsec[success_hat$Stage=="5"])
+hist(success_hat$EXIT.DURATION.StarttoFullyOutsec[success_hat$Stage=="6"])
+hist(success_hat$EXIT.DURATION.StarttoFullyOutsec[success_hat$Stage=="7"])
+```
+
+
+Non-parametric
+
 
 ## **3. Results**
 
@@ -239,6 +254,7 @@ fisher.test(tab1)
 Original Data
 
 ![](img/fig 2.jpg)
+
 
 
 **1. Treatments together**
@@ -308,13 +324,19 @@ summary(tab3)
 ### **3.3 Position changes after displacement – search for initial rupture site**
 
 Original Data
+
+
 ![](img/fig 3.jpg)
+
+
+**Outcome (S2-3)**
 
 ```{r}
 par(mfrow=c(1,2))
-boxplot(NumPosChanADBefore2ndHole~Stage,success_hat)
+boxplot(NumPosChanADBefore2ndHole~Stage,success_hat, main ="Successfully hatched" , ylab = "Position changes before 2nd hole")
 
-boxplot(NumPosChanADBefore2ndHole~Stage,failed_hat)
+boxplot(NumPosChanADBefore2ndHole~Stage,failed_hat, main="Rescued embryos", ylab = "Position changes before rescue time")
+
 ```
 
 Subsetting data frame: to extract only values from the earliest stages where embryos got more trouble making a second hole to hatch
@@ -326,48 +348,58 @@ str(young_outcome)
 ```
 ```{r}
 par(mfrow=c(1,2))
-hist(young_outcome$NumPosChanADBefore2ndHole[young_outcome$Rescue=="1"])
-hist(young_outcome$NumPosChanADBefore2ndHole[young_outcome$Rescue=="0"])
+hist(young_outcome$NumPosChanADBefore2ndHole[young_outcome$Rescue=="1"], main = "Rescued embryos")
+hist(young_outcome$NumPosChanADBefore2ndHole[young_outcome$Rescue=="0"], main = "Successfully hatched")
 
 ```
 
-
+**Boxplot Outcome (2-3)**
 ```{r}
 boxplot(data = young_outcome, NumPosChanADBefore2ndHole ~ Rescue, col = c("burlywood2", 
-    "lightpink1"))
+    "lightpink1"), ylab =  "Position changes before rescue time")
 
 wilcox.test(NumPosChanADBefore2ndHole~Rescue, data = young_outcome, correct=FALSE)
 ```
+          
+        *0= hatched successfully
+        *1= rescued/unable to hatch
+        *Orginal JMP: p-value = < 0.0001 (N= 10,14)
+        *Replication: p-value = 8.265e-08 (< 0.0001)
 
-p-value = < 0.0001
-N= 10,14
 
+
+
+**Developmental stages (successfully hatched only)**
 ```{r}
 boxplot(data = success_hat, NumPosChanADBefore2ndHole ~ comst, col = c("burlywood2", 
-    "lightpink1", "purple"))
+    "lightpink1", "purple"), ylab = "Position changes before 2nd hole", xlab = "grouped stages", main= "Successfully hatched embryos after displacement")
 
 kruskal.test(NumPosChanADBefore2ndHole ~ comst,
              data =success_hat)
 ```
 
- p-value = 0.2488
- N = 14, 53, 84
+        *Original: p-value = 0.16 (N = 14, 53, 84)
+        *Replication: p-value = 0.2488
+        
 
-Exit from egg: fist or second rupture
+**Exit from egg: fist or second rupture**
 
 ```{r}
 boxplot(data = success_hat, NumPosChanADBefore2ndHole ~ NumHoles, col = c("burlywood2", 
-    "lightpink1"))
+    "lightpink1"), ylab = "Position changes before 2nd hole", xlab = "Exit from egg (1st or 2nd hole)", main= "Successfully hatched embryos after displacement")
 
 wilcox.test(NumPosChanADBefore2ndHole~NumHoles, data = success_hat, correct=FALSE)
 ```
-P < 0.0001
-N = 41, 110
+            
+            * Original: p-value < 0.0001 (N = 41, 110)
+            * Replication: p-value = 3.33e-06 (< 0.0001)
+          
 
 
 ### **3.4 Body compression during exit: compare body compression observation and duration across different developmental stages**
 
 ![](img/fig 4.jpg)
+
 
 *Mosaic plot - compression seen across stages
 ```{r}
@@ -385,11 +417,10 @@ attach(success_hat)
 mosaic(~ CompressionSeen + comst, data = success_hat, main = "Escape-hatching success after complications", shade= TRUE,legend=TRUE)
 ```
 
-```{r}
-fisher.test(totals1)
-```
-
-
+          * Original: p-value= 0.0032
+          * Replication: p-value= 0.0036
+          
+          
 * Boxplot compression duration in seconds
 
 ```{r}
@@ -402,6 +433,8 @@ p <- p + stat_n_text(y.pos = 70)
 p <- p + theme_classic()+ scale_fill_manual(breaks = c("2,3", "4,7"), 
                        values=c("lightskyblue", "mediumaquamarine"))
 p
+
+
 ```
 
 
@@ -410,7 +443,8 @@ p
 boxplot(CompressionSec ~ groupst, data=success_hat)
 ```
 
-p-value = 0.02087
+        * Original: p-value = 0.019 (N = 7, 21)
+        * Replicate: p-value = 0.02087
 
 
 ```{r}
@@ -422,10 +456,12 @@ wilcox.test(CompressionSec ~groupst, data=success_hat)
 ### **3.5. Exit duration: compare the speed of the hatching process (after displacement) across different developmental stages** 
 
 * Boxplot exit duration in seconds
-```{r}
-#good one
+
+```{r, include=FALSE}
 attach(success_hat)
-#good one
+```
+
+```{r}
 p <- ggplot(data=success_hat, aes(x=Stage, y=EXIT.DURATION.StarttoFullyOutsec, fill=Stage))+stat_boxplot(geom='errorbar', linetype=1, width=0.5)+  #whiskers
 geom_boxplot(outlier.shape=1)
 p <- p + geom_boxplot()+ stat_summary(fun.y = mean, geom = "point", shape=5, size=5, fill="white")
@@ -437,13 +473,33 @@ p <- p + theme_classic()+ scale_fill_manual(breaks = c("2", "3", "4", "5", "6", 
 p
 
 ```
+         
+         
+          *Original: p-value= 0.0006
+          *Replication: p-value= 0.0002669
+
+
+```{r}
+kruskal.test(EXIT.DURATION.StarttoFullyOutsec ~ Stage,
+             data =success_hat)
+```
+
+
+
+## **4. Figure**
+
+
+![](img/Figure.jpg)
 
 
 ## **5. Conclusions**
+
 * Embryos escaped either by re-finding their first hole or by making another. Few Stage-2
 embryos made a second hole but the likelihood of doing so increased rapidly.
+
 * Many Stage 2 embryos changed position many times, presumably in effort to re-find their first
 hole. More developed embryos also searched, but others immediately made another hole.
+
 * Body compression during exit decreased with development; later stages made larger
 holes and passed through them more rapidly, likely due to both increased ennzyme
 reserves and greater muscular strength.
@@ -451,6 +507,7 @@ reserves and greater muscular strength.
 ## **6. References**
 
 1.Salazar-Nicholls, M.J., K.D. Escobar & K.M. Warkentin. January 2017. Development of hatching ability in red-eyed treefrogs: escape from complications. Society for Integrative and Comparative Biology Meeting, New Orleans, LA.
+
 2. Cohen, K. L., Seid, M. A., & Warkentin, K. M. (2016). How embryos escape from danger: the mechanism of rapid, plastic hatching in red-eyed treefrogs. Journal of Experimental Biology, 219(12), 1875-1883.
 
 ```{r setup, include=FALSE}
