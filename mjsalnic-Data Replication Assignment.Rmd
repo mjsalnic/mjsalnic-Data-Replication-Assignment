@@ -10,38 +10,33 @@ output:
      
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
-# **Development of hatching ability in red-eyed treefrogs: escape from complications**
+***
+# **Development of hatching ability in red-eyed treefrogs: escape from complications** ![*Agalychnis callidryas*](img/AcAdult.png)
+***
 
 Authors: MJ Salazar-Nicholls^1,3^, KD Escobar^2^ & KM Warkentin^3^
- 1. Pontificia Universidad Católica, Ecuador; 2. Western Connecticut State University; 3. Boston Affiliations: University – majonicholls2909@gmail.com – [Warkentin Lab](http://sites.bu.edu/warkentinlab/)
 
-![*Agalychnis callidryas*](img/AcAdult.png)
+Affiliations: 1. Pontificia Universidad Católica, Ecuador; 2. Western Connecticut State University; 3. Boston  University – majonicholls2909@gmail.com – [Warkentin Lab](http://sites.bu.edu/warkentinlab/)
 
+
+
+## **Brief Introduction**
+
+Hatching early allows embryos to escape threats to eggs, but increases risks to larvae. Red-eyed treefrogs hatch by rapidly releasing enzymes to digest a small hole in their membrane, then squeezing out aided by turgor pressure. Displacement from the initial hole can occur spontaneously and in predator attacks, complicating hatching by capsular collapse as fluid escapes. To assess developmental changes in ability to recover from such complications, we manually displaced 3-5 day old embryos during hatching, interrupting exit through their initial hole, and recorded macro-video. To induce hatching of younger, vibration-insensitive embryos, we submerged individual eggs in hypoxic water. For older embryos, we used a blunt probe to jiggle eggs within clutches. Once an embryo began hatching, we manually displaced it, moving its snout away from the forming or just-formed hole. We analyzed videos to assess if and how embryos escaped. The least-developed embryos rarely escaped from collapsed capsules but performance improved rapidly; late stages always escaped. Embryos escaped by either re-finding their first hole or making a second. The post-displacement delay to start an exit through the first hole was similar across stages. Even at the earliest stages, a few individuals made second holes, but the likelihood of doing so increased rapidly, to about 75%. More developed embryos spent less effort searching for their first hole; they made second holes sooner and more efficiently. They also passed through the membrane more rapidly, with less body compression in transit. Along with high risk after hatching, poor ability to escape from hatching complications may select against unnecessary hatching attempts at early developmental stages.
 
 ![wasp attacking *Agalychnis callidryas* clutch](img/waspattack.jpg)
 
+### **Objective** 
+Assess developmental changes in ability to recover from hatching complications in Red-eyed treefrogs embryos
 
 
-## Brief Introduction
+## **Methods**
 
-Hatching early allows embryos to escape threats to eggs, but increases risks to larvae. Red-eyed treefrogs, *Agalychnis callidryas*, hatch by rapidly releasing enzymes to digest a small hole in their
-membrane, then squeezing out aided by turgor pressure. Displacement from the initial hole can occur spontaneously and in predator attacks, complicating hatching by capsular collapse as fluid escapes.
-
-### Objective 
-Assess developmental changes in ability to recover from hatching complications
-
-
-## Methods
-
-* Collected young *A. callidryas clutches from pond, maintained in lab at Smithsonian Tropical Research Institute, Gamboa, Panama
+* Collected young *A. callidryas* clutches from pond, maintained in lab at Smithsonian Tropical Research Institute, Gamboa, Panama
 * Induced individual 3– 5 day old embryos to begin hatching, using hypoxia and mechanosensory stimuli
 * Manually displaced embryo in egg, interrupting exit through initial rupture
 * Recorded macro-video until embryo exited its capsule; rescued individuals that failed to hatch after 30 minutes
-* Analyzed only videos where manipulation was performed successfully
+* Video analysis: We analyzed recordings in QuickTime Player (Apple Inc), event timing was quantified from frame numbers. Quantified events were first membrane rupture time, position changes after displacement, second rupture time, body compression observed during exit, compression duration time, exit duration as defined in Cohen et al (2016). 
 
 Flooding | Jiggling
 ------------- | -------------
@@ -52,23 +47,62 @@ R1: rupture one
 
 R2: rupture two
 
-## Outline 
+## **Outline** 
 
 This is an analysis of the data used for a poster presentation at SICB 2017, which now is part of a manuscript. The statistical analyses presented in the poster were made using [JMP-data analysis sorfware](https://www.jmp.com/en_us/software/data-analysis-software.html)
+The statistical analysis in made for SICB includes: boxplots, contingency Analysis (Mosaic plots and contingency tables), Wilcoxon/Kruskal-Wallis (Rank Sum) tests, Fisher´s exact Test,
 
-1. Load and data cleaning
-2. Mosaic plots, contingency analysis
-3. Wilcoxon test
-4. Box plots
+(1) Load and data preparation
+(2) Exporatory analysis
+(3) Results
 
+   + 3.1. Escape-hatching success after complications: compare the hatching success of embryos after displacement across different developmental stages
 
-```{r}
-#install.packages("MASS")
-#install.packages("coin")
-```
+            * Mosaic plots, contingency analysis
+
+            * Pearson's Chi-squared test
+
+   + 3.2. Multiple membrane ruptures: analyzed the ability to make more membrane ruptures after displacement across different developmental stages, comparison between treatments
+
+            * Mosaic plots, contingency analysis
+            * Wilcoxon test
+
+   + 3.3. Position changes after displacement – search for initial rupture site: compare the behavior (body positions changes) after the embryo lost the first rupture. How many times the embryos -across different developmental stages- move around the egg before making another hole or until the time when need to be rescued
+
+            * Box plots
+            * Wilcoxon test
+
+   + 3.4. Body compression during exit: compare body compression observation and duration across different developmental stages
+
+            * Mosaic plots, contingency analysis
+            * Box plots
+            * Wilcoxon test
+
+   + 3.5. Exit duration: compare the speed of the hatching process (after displacement) across different developmental stages 
+
+            * Box plots
+            * Wilcoxon test
+
+(4) Figure
+(5) Conclusions
+(6) References
+
+### Packages required
+
+* curl
+* dplyr
+* ggplot2
+* plotly
+* EnvStats
+* MASS
+* coin
+* vcd
+* vcdExtra
+
 
 ### Loading required libraries
-```{r}
+```{r, include=FALSE}
+library(knitr)
 library(curl)
 library(dplyr)
 library(ggplot2)
@@ -76,24 +110,29 @@ library(plotly)
 library(EnvStats)
 library(MASS)
 library(coin)
+library(vcd)
+library(vcdExtra)
 ```
 
+## **1. Load and data preparation**
 
-### Data loading
+### **1.1 Data loading**
 
 ```{r}
 f <- curl("https://raw.githubusercontent.com/mjsalnic/mjsalnic-data-replication-assignment/master/HC2016R.csv")
 HC2016R <- read.csv(f, header = TRUE, sep = ";",dec=",", stringsAsFactors = FALSE)
-head(HC2016R)
+kable(head(HC2016R))
 
 ```
 
-```{r}
+```{r,include=FALSE}
 attach(HC2016R)
 ```
 
-Transforming numerical variables to factorial
-### Exit duration
+### **1.2 Preparing the data frame to analysis**
+
+* Transforming numerical variables to factorial 
+
 ```{r}
 HC2016R$Stage<- factor(HC2016R$Stage)
 HC2016R$Age<- factor(HC2016R$Age)
@@ -102,6 +141,8 @@ HC2016R$Rescue<- factor(HC2016R$Rescue)
 
 str(HC2016R)
 ```
+
+* Subsetting data frame
 
 let’s subset the data into 2 outcome groups: success_hat (hatched embryos after displacement) and failed_hat(embryos unable to hatch after displacement) 
 ```{r}
@@ -114,83 +155,22 @@ let’s subset the data into 2 treatment groups: flooding and jiggling
 flooding<-subset (HC2016R, Treatment=="Flooding", na.rm=T)
 jiggling<-subset(HC2016R, Treatment=="Jiggling", na.rm=T)
 ```
-Explore if there are differences in the outcome between treatments
-## Results
 
-### Escape-hatching success after complications
-There are not differences between treatments
 
-1. Mosaic plot - graphical representation of the frequency of successul hatching and unable to hatch after displacement experiment (combined experiments)
+## **2. Exploratory analysis**
+
+Compare number of holes by Age
+```{r}
+mosaic(~ NumHoles + Age, data = HC2016R, main = "Escape-hatching success after complications", shade= TRUE,legend=TRUE)
+```
+
+compare number of holes by Stage
 
 ```{r}
-totals=table(HC2016R$Stage,HC2016R$Rescue)
-mosaicplot(totals, main = "Escape-hatching success after complications", xlab = "Embryonic developmental stage", ylab = "proportion of embryos", col=c("light green", "black"))
-
-#where 0 means no rescue needed, embryo able to hatch by itself and 1 means rescue after displacement experiment 
-
+mosaic(~ NumHoles + Stage, data = HC2016R, main = "Escape-hatching success after complications", shade= TRUE,legend=TRUE)
 ```
 
 
-1= Failed to hatch 
-![](img/Compression.jpg)
-0= Succesfully hatched embryos 
-
-
-Stage: P < 0.0001
-
-2. Contingency table-  Escape-hatching success after complications
-```{r}
-
-tab1<-table(HC2016R$Stage, HC2016R$Rescue)
-prop.table(tab1)*100
-chisq.test(tab1)
-fisher.test(tab1)
-
-```
-### Multiple membrane ruptures
-
-1. Treatments together
-```{r}
-tab<-table(HC2016R$Stage, HC2016R$NumHoles)
-prop.table(tab)*100
-chisq.test(tab)
-fisher.test(tab)
-```
-
-
-2. Mosaic plot- multiple membrane ruptures - Flooding treatment
-```{r}
-attach(flooding)
-totals=table(flooding$Stage,flooding$NumHoles)
-mosaicplot(totals, main = "Multiple membrane ruptures", xlab = "Embryonic developmental stage", ylab = "Proportion of embryos", col=c("light green", "black"))
-```
-p-value = 0.009272
-
-
-2.1 Contigency table- Multiple membrane ruptures
-```{r}
-tab2<-table(flooding$Stage, flooding$NumHoles)
-fisher.test(tab2)
-```
-
-3. Mosaic plot- multiple membrane ruptures - Jiggling treatment
-```{r}
-totals=table(jiggling$Stage,jiggling$NumHoles)
-mosaicplot(totals, main = "Multiple membrane ruptures", xlab = "Embryonic developmental stage", ylab = "Proportion of embryos", col=c("light green", "black"))
-
-
-```
-p-value = 0.1508
-
-
-3.1 Contigency table- Multiple membrane ruptures
-```{r}
-tab3<-table(jiggling$Stage, jiggling$NumHoles)
-fisher.test(tab3)
-summary(tab3)
-```
-
-### Position changes after displacement – search for initial rupture site
 
 Should we use parametric or non-parametric test?
 
@@ -206,13 +186,139 @@ hist(HC2016R$NumPosChanADBefore2ndHole[HC2016R$Stage=="7"])
 ```
 
 
+There are not differences between treatments
+
+## **3. Results**
+
+### **3.1 Escape-hatching success after complications**
+
+Original Data: 
+
+![](img/Fig 1.png)
+
+
+### 3.1.1 Mosaic plot - graphical representation of the frequency of successul hatching and unable to hatch after displacement experiment (combined experiments)
+
+
+```{r}
+mosaic(~ Rescue + Stage, data = HC2016R, main = "Escape-hatching success after complications", shade= TRUE,legend=TRUE)
+```
+
+
+```{r}
+totals=table(HC2016R$Stage,HC2016R$Rescue)
+mosaicplot(totals, main = "Escape-hatching success after complications", xlab = "Embryonic developmental stage", ylab = "proportion of embryos", col=c("light green", "black"))
+
+#where 0 means no rescue needed, embryo able to hatch by itself and 1 means rescue after displacement experiment 
+
+```
+
+
+
+      * 1= Failed to hatch 
+
+      * 0= Succesfully hatched embryos 
+
+      * Original JMP: P < 0.0001
+      * Replication: P < 0.0001
+
+
+
+2. Contingency table-  Escape-hatching success after complications
+```{r}
+
+tab1<-table(HC2016R$Stage, HC2016R$Rescue)
+prop.table(tab1)*100
+chisq.test(tab1)
+fisher.test(tab1)
+
+```
+### **3.2 Multiple membrane ruptures**
+
+
+Original Data
+
+![](img/fig 2.jpg)
+
+
+**1. Treatments together**
+```{r}
+tab<-table(HC2016R$Stage, HC2016R$NumHoles)
+prop.table(tab)*100
+chisq.test(tab)
+fisher.test(tab)
+```
+
+#### **By treatment**
+
+**2. Flooding treatment**- Mosaic plot- multiple membrane ruptures 
+
+```{r,include=FALSE}
+attach(flooding)
+```
+
+
+```{r}
+
+totals=table(flooding$Stage,flooding$NumHoles)
+mosaicplot(totals, main = "Multiple membrane ruptures", xlab = "Embryonic developmental stage", ylab = "Proportion of embryos", col=c("light green", "black"))
+```
+ 
+
+
+Compare number of holes by stage- Flooding treatment
+```{r}
+mosaic(~ NumHoles + Stage, data = flooding, main = "Escape-hatching success after complications", shade= TRUE,legend=TRUE)
+```
+    
+      * Original JMP: p-value = 0.011
+      * Replication: p-value = 0.018
+      
+      
+**2.1 Flooding treatment**- Contigency table
+```{r}
+tab2<-table(flooding$Stage, flooding$NumHoles)
+tab2
+```
+
+**3. Jiggling treatment- Mosaic plot** 
+```{r}
+totals=table(jiggling$Stage,jiggling$NumHoles)
+mosaicplot(totals, main = "Multiple membrane ruptures", xlab = "Embryonic developmental stage", ylab = "Proportion of embryos", col=c("light green", "black"))
+
+
+```
+
+    
+  
+
+**3.1 Jiggling treatment**- Contigency table
+```{r}
+tab3<-table(jiggling$Stage, jiggling$NumHoles)
+fisher.test(tab3)
+summary(tab3)
+```
+
+
+
+      * Original JMP: p-value= 0.16
+      * Replication: p-value = 0.1508
+      
+      
+### **3.3 Position changes after displacement – search for initial rupture site**
+
+Original Data
+![](img/fig 3.jpg)
+
 ```{r}
 par(mfrow=c(1,2))
 boxplot(NumPosChanADBefore2ndHole~Stage,success_hat)
 
 boxplot(NumPosChanADBefore2ndHole~Stage,failed_hat)
 ```
+
 Subsetting data frame: to extract only values from the earliest stages where embryos got more trouble making a second hole to hatch
+
 ```{r}
 young_outcome<- subset(HC2016R, comst="2-3", select = NumPosChanADBefore2ndHole:Rescue)
 
@@ -232,6 +338,7 @@ boxplot(data = young_outcome, NumPosChanADBefore2ndHole ~ Rescue, col = c("burly
 
 wilcox.test(NumPosChanADBefore2ndHole~Rescue, data = young_outcome, correct=FALSE)
 ```
+
 p-value = < 0.0001
 N= 10,14
 
@@ -257,7 +364,64 @@ wilcox.test(NumPosChanADBefore2ndHole~NumHoles, data = success_hat, correct=FALS
 P < 0.0001
 N = 41, 110
 
-Exit duration
+
+### **3.4 Body compression during exit: compare body compression observation and duration across different developmental stages**
+
+![](img/fig 4.jpg)
+
+*Mosaic plot - compression seen across stages
+```{r}
+totals1=table(success_hat$comst,success_hat$CompressionSeen)
+mosaicplot(totals1, main = "Escape-hatching success after complications", xlab = "Embryonic developmental stage", ylab = "proportion of embryos", col=c("light green", "pink"))
+```
+
+
+```{r, include=FALSE}
+attach(success_hat)
+```
+
+
+```{r}
+mosaic(~ CompressionSeen + comst, data = success_hat, main = "Escape-hatching success after complications", shade= TRUE,legend=TRUE)
+```
+
+```{r}
+fisher.test(totals1)
+```
+
+
+* Boxplot compression duration in seconds
+
+```{r}
+p <- ggplot(data=success_hat, aes(x=groupst, y= CompressionSec, fill=groupst))+stat_boxplot(geom='errorbar', linetype=1, width=0.5)+  #whiskers
+geom_boxplot(outlier.shape=1)
+p <- p + geom_boxplot()+ stat_summary(fun.y = mean, geom = "point", shape=5, size=5, fill="white")
+p <- p + theme(axis.text.x=element_text(angle=0))
+p <- p + ylab("Compression Duration (sec)") + xlab("Developmental stage")
+p <- p + stat_n_text(y.pos = 70)
+p <- p + theme_classic()+ scale_fill_manual(breaks = c("2,3", "4,7"), 
+                       values=c("lightskyblue", "mediumaquamarine"))
+p
+```
+
+
+* Compression duration (s)
+```{r}
+boxplot(CompressionSec ~ groupst, data=success_hat)
+```
+
+p-value = 0.02087
+
+
+```{r}
+wilcox.test(CompressionSec ~groupst, data=success_hat)
+
+```
+        
+
+### **3.5. Exit duration: compare the speed of the hatching process (after displacement) across different developmental stages** 
+
+* Boxplot exit duration in seconds
 ```{r}
 #good one
 attach(success_hat)
@@ -273,51 +437,24 @@ p <- p + theme_classic()+ scale_fill_manual(breaks = c("2", "3", "4", "5", "6", 
 p
 
 ```
-Body Compression
-
-```{r}
-totals1=table(success_hat$comst,success_hat$CompressionSeen)
-mosaicplot(totals1, main = "Escape-hatching success after complications", xlab = "Embryonic developmental stage", ylab = "proportion of embryos", col=c("light green", "pink"))
-```
-
-```{r}
-p <- ggplot(data=success_hat, aes(x=groupst, y= CompressionSec, fill=groupst))+stat_boxplot(geom='errorbar', linetype=1, width=0.5)+  #whiskers
-geom_boxplot(outlier.shape=1)
-p <- p + geom_boxplot()+ stat_summary(fun.y = mean, geom = "point", shape=5, size=5, fill="white")
-p <- p + theme(axis.text.x=element_text(angle=0))
-p <- p + ylab("Compression Duration (sec)") + xlab("Developmental stage")
-p <- p + stat_n_text(y.pos = 70)
-p <- p + theme_classic()+ scale_fill_manual(breaks = c("2,3", "4,7"), 
-                       values=c("lightskyblue", "mediumaquamarine"))
-p
-```
-```{r}
-detach(flooding)
-
-```
 
 
-```{r}
+## **5. Conclusions**
+* Embryos escaped either by re-finding their first hole or by making another. Few Stage-2
+embryos made a second hole but the likelihood of doing so increased rapidly.
+* Many Stage 2 embryos changed position many times, presumably in effort to re-find their first
+hole. More developed embryos also searched, but others immediately made another hole.
+* Body compression during exit decreased with development; later stages made larger
+holes and passed through them more rapidly, likely due to both increased ennzyme
+reserves and greater muscular strength.
 
-```
+## **6. References**
 
-```{r}
-attach(success_hat)
-x <- c(Stage)
+1.Salazar-Nicholls, M.J., K.D. Escobar & K.M. Warkentin. January 2017. Development of hatching ability in red-eyed treefrogs: escape from complications. Society for Integrative and Comparative Biology Meeting, New Orleans, LA.
+2. Cohen, K. L., Seid, M. A., & Warkentin, K. M. (2016). How embryos escape from danger: the mechanism of rapid, plastic hatching in red-eyed treefrogs. Journal of Experimental Biology, 219(12), 1875-1883.
 
-x<- factor(x)
-levels(x)<- list("St2-3"=c("2","3"), "st 4-7"=c("4", "5", "6", "7"))
-x
-
-boxplot(CompressionSec ~ x, data=success_hat)
-```
-
-p-value = 0.02087
-
-
-```{r}
-wilcox.test(CompressionSec ~groupst, data=success_hat)
-
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ## R Markdown
